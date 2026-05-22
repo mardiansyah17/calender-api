@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum HolidayType {
+  NATIONAL_HOLIDAY
+  JOINT_LEAVE
+}
+
+enum HolidayScope {
+  NATIONAL
+  REGIONAL
+}
+
+model Holiday {
+  id          Int          @id @default(autoincrement())
+  date        DateTime     @db.Date
+  name        String       @db.VarChar(255)
+  type        HolidayType
+  scope       HolidayScope @default(NATIONAL)
+  year        Int
+  description String?      @db.Text
+  isActive    Boolean      @default(true)
+  source      String?      @db.VarChar(255)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([date, type])
+  @@index([year])
+  @@index([date])
+  @@index([type])
+  @@index([isActive])
+  @@map("holidays")
+}
